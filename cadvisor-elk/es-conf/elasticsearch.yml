@@ -1,0 +1,7 @@
+path:
+  work: /tmp/elasticsearch
+
+http.cors.allow-origin:
+
+script.inline: true
+script.indexed: true

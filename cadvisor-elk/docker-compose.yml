@@ -1,0 +1,31 @@
+elasticsearch:
+  image: docker.moscow.alfaintra.net/elasticsearch-oem:1.7.3
+  volumes:
+   - $PWD/es-conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+   - $PWD/es-conf/templates:/usr/share/elasticsearch/config/templates
+  ports:
+    - "9200:9200"
+    - "9300:9300"
+
+kibana:
+  image: kibana:4.0
+  links:
+    - elasticsearch
+  ports:
+    - "5601:5601"
+  environment:
+    - KIBANA_ES_URL=http://elasticsearch:9200
+
+cadvisor:
+  image: google/cadvisor:latest
+  restart: always
+  ports:
+    - "8888:8080"
+  volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+  links:
+    - elasticsearch
+  command: -storage_driver="elasticsearch" -alsologtostderr=true -storage_driver_es_host="http://elasticsearch:9200"
